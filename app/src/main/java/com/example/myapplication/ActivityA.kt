@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import android.graphics.Color
+
 
 
 class ActivityA : AppCompatActivity() {
@@ -15,10 +15,15 @@ class ActivityA : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("сообщение", "вызвался onCreate")
         if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_a)
         } else {
             setContentView(R.layout.activity_a_land)
+        }
+
+        if (savedInstanceState != null) {
+            fragmentBB = supportFragmentManager.findFragmentByTag("FRAGMENT_BB") as? FragmentBB
         }
 
         val buttonOpenActivityB: Button = findViewById(R.id.button_open_activity_b)
@@ -61,13 +66,6 @@ class ActivityA : AppCompatActivity() {
                 .commit()
         }
     }
-    fun openFragmentBA() {
-        Log.d("сообщение", "Открытие FragmentBA")
-        val fragmentBA = FragmentBA()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragmentBA)
-            .commit()
-    }
     private fun openFragmentsForLandscape() {
         val fragmentManager = supportFragmentManager
 
@@ -93,5 +91,14 @@ class ActivityA : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Log.d("сообщение", "onNewIntent для активити А вызван")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Сохраняем цвет фона FragmentBB
+        fragmentBB?.let { fragment ->
+            outState.putInt("bg_color", fragment.getBackgroundColor()) // Предполагается, что вы создадите метод для получения цвета
+        }
     }
 }

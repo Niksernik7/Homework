@@ -12,6 +12,15 @@ import kotlin.random.Random
 
 class FragmentBA : Fragment() {
 
+    companion object {
+        fun newInstance(): FragmentBA {
+            return FragmentBA()
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("сообщение", "onCreateAA")
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,13 +36,17 @@ class FragmentBA : Fragment() {
             val randomColor = getRandomColor()
             Log.d("сообщение", "Устанавливаем цвет: $randomColor")
             val bundle = Bundle()
-            bundle.putInt("color", randomColor) // Сохраняем цвет в бандл
-            val fragmentBB = activity?.supportFragmentManager?.findFragmentByTag("FRAGMENT_BB") as? FragmentBB
-            if (fragmentBB != null) {
-                fragmentBB.arguments = bundle // Устанавливаем аргументы
-                fragmentBB.view?.let { it1 -> fragmentBB.changeColor(it1) }
-            } else {
-                Log.e("сообщение", "FragmentBB не найден!")
+            val resultBundle = Bundle().apply {
+                putInt("colorKey", randomColor) // Сохраняем цвет в бандл
+            }
+            parentFragmentManager.setFragmentResult("colorRequestKey", resultBundle) // Отправляем результат
+            // Замена FragmentBA на FragmentBB
+            val fragmentBB = FragmentBB.newInstance()
+            if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragmentBB, "FRAGMENT_BB")
+                    .addToBackStack(null) // добавляем в back stack, если нужно
+                    .commit()
             }
         }
     }
@@ -43,5 +56,17 @@ class FragmentBA : Fragment() {
         val g = Random.nextInt(256)
         val b = Random.nextInt(256)
         return Color.rgb(r, g, b)
+    }
+    override fun onResume() {
+        super.onResume()
+        Log.d("сообщение", "ResumeAA")
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("сообщение", "ResueDestroyViewAA")
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("сообщение", "ResumeDestroyAA")
     }
 }
