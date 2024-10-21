@@ -15,13 +15,15 @@ class ActivityA : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_a)
+        if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
+            setContentView(R.layout.activity_a)
+        } else {
+            setContentView(R.layout.activity_a_land)
+        }
 
         val buttonOpenActivityB: Button = findViewById(R.id.button_open_activity_b)
         val buttonOpenFragmentB: Button = findViewById(R.id.button_open_fragment_b)
 
-        Log.d("сообщение", "ID buttonOpenActivityB: ${buttonOpenActivityB.id}")
-        Log.d("сообщение", "ID buttonOpenActivityB: ${buttonOpenFragmentB.id}")
         // Открытие новой активности
         buttonOpenActivityB.setOnClickListener {
             val intent = Intent(this, ActivityB::class.java)

@@ -12,13 +12,15 @@ import android.graphics.Color
 
 class FragmentBB : Fragment() {
 
-    //private var currentColor: Int = Color.WHITE
-
     companion object {
         fun newInstance(): FragmentBB {
             val fragment = FragmentBB()
             return fragment
         }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("сообщение", "живем")
     }
 
     override fun onCreateView(
@@ -30,10 +32,6 @@ class FragmentBB : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Применяем цвет фрагменту при его создании
-        //view.setBackgroundColor(currentColor)
-
         val color = arguments?.getInt("color")
         if (color != null) {
             view.setBackgroundColor(color) // Устанавливаем цвет

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import kotlin.random.Random
-//import android.graphics.drawable.ColorDrawable
 
 class FragmentBA : Fragment() {
 

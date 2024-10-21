@@ -19,9 +19,6 @@
             android:name=".FragmentBB"
             android:exported="false" />
         <activity
-            android:name=".FragmentAB"
-            android:exported="false" /> <!-- Главная активность, которая открывается при запуске приложения -->
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
