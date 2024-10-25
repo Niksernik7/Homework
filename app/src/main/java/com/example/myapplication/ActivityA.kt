@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -11,43 +12,12 @@ import androidx.fragment.app.FragmentManager
 
 class ActivityA : AppCompatActivity() {
 
-    var fragmentBB: FragmentBB? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("сообщение", "вызвался onCreate")
-        if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
-            setContentView(R.layout.activity_a)
-        } else {
-            setContentView(R.layout.activity_a_land)
-        }
-
-        if (savedInstanceState != null) {
-            fragmentBB = supportFragmentManager.findFragmentByTag("FRAGMENT_BB") as? FragmentBB
-        }
-
-        val buttonOpenActivityB: Button = findViewById(R.id.button_open_activity_b)
-        val buttonOpenFragmentB: Button = findViewById(R.id.button_open_fragment_b)
-
-        // Открытие новой активности
-        buttonOpenActivityB.setOnClickListener {
-            val intent = Intent(this, ActivityB::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            startActivity(intent)
-        }
-
-        // Открытие фрагмента B
-        buttonOpenFragmentB.setOnClickListener {
-            Log.d("сообщение", "Кнопка Open FragmentB нажата")
-            if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
-                openOrReuseFragmentBB()
-            } else {
-                openFragmentsForLandscape()
-            }
-        }
+        setContentView(R.layout.activity_a)
     }
 
-    private fun openOrReuseFragmentBB() {
+    fun openOrReuseFragmentBB() {
         val fragmentManager: FragmentManager = supportFragmentManager
         val fragmentBB: FragmentBB? = fragmentManager.findFragmentByTag("FRAGMENT_BB") as? FragmentBB
 
@@ -87,18 +57,42 @@ class ActivityA : AppCompatActivity() {
                 .commit()
         }
     }
+    override fun onStart() {
+        super.onStart()
+        Log.d("сообщение", "onStart")
+        val buttonOpenActivityB: Button = findViewById(R.id.button_open_activity_b)
+        val buttonOpenFragmentB: Button = findViewById(R.id.button_open_fragment_b)
+
+        // Открытие новой активности
+        buttonOpenActivityB.setOnClickListener {
+            val intent = Intent(this, ActivityB::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+            startActivity(intent)
+        }
+        // Открытие фрагмента B
+        buttonOpenFragmentB.setOnClickListener {
+            Log.d("сообщение", "Кнопка Open FragmentB нажата")
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                openOrReuseFragmentBB()
+            } else {
+                openFragmentsForLandscape()
+            }
+        }
+    }
+
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Log.d("сообщение", "onNewIntent для активити А вызван")
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("сообщение", "Destroy")
+    }
 
-        // Сохраняем цвет фона FragmentBB
-        fragmentBB?.let { fragment ->
-            outState.putInt("bg_color", fragment.getBackgroundColor()) // Предполагается, что вы создадите метод для получения цвета
-        }
+    override fun onPause() {
+        super.onPause()
+        Log.d("сообщение", "ПАУЗА")
     }
 }

@@ -22,24 +22,25 @@ class FragmentBB : Fragment() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("сообщение", "onCreateBB")
 
         if (savedInstanceState != null) {
-            backgroundColor = savedInstanceState.getInt("bg_color", Color.WHITE)
+            Log.d("сообщение", "ДОСТАЛИ ЦВЕТ")
+            backgroundColor = savedInstanceState.getInt("bg_color")
         }
+        Log.d("сообщение", "onCreateBB")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("сообщение", "onCreateViewBB")
         return inflater.inflate(R.layout.fragment_bb, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBackgroundColor(backgroundColor)
-
 
         val buttonOpenFragmentBA: Button = view.findViewById(R.id.button_open_fragment_ba)
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -49,16 +50,30 @@ class FragmentBB : Fragment() {
             // Показать кнопку в портретной ориентации
             buttonOpenFragmentBA.visibility = View.VISIBLE
             buttonOpenFragmentBA.setOnClickListener {
-                val fragmentBA = FragmentBA.newInstance()
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragmentBA, "FRAGMENT_BB")
-                    .addToBackStack(null) // добавляем в back stack, если нужно
-                    .commit()
+
+                val fragmentBA: FragmentBA? =
+                    parentFragmentManager.findFragmentByTag("FRAGMENT_BA") as? FragmentBA
+
+                if (fragmentBA == null) {
+                    Log.d("сообщение", "Создание нового FragmentBA")
+                    val newFragmentBA = FragmentBA.newInstance()
+                    parentFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container, newFragmentBA, "FRAGMENT_BA")
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    Log.d("сообщение", "Использование существующего FragmentBA")
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragmentBA, "FRAGMENT_BA")
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
         }
         parentFragmentManager.setFragmentResultListener("colorRequestKey", this) { _, bundle ->
             val color = bundle.getInt("colorKey")
-            view.setBackgroundColor(color) // Устанавливаем цвет
+            view.setBackgroundColor(color)
+            backgroundColor = color // Устанавливаем цвет
             Log.d("сообщение", "Извлеченный цвет: $color")
         }
     }
@@ -68,11 +83,11 @@ class FragmentBB : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("сообщение", "ResueDestroyViewBB")
+        Log.d("сообщение", "DestroyViewBB")
     }
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("сообщение", "ResumeDestroyBB")
+        Log.d("сообщение", "DestroyBB")
     }
 
     fun getBackgroundColor(): Int {
@@ -82,6 +97,14 @@ class FragmentBB : Fragment() {
     // Метод для изменения фонового цвета
     fun setBackgroundColor(color: Int) {
         backgroundColor = color
-        view?.setBackgroundColor(color)
+        view?.setBackgroundColor(backgroundColor)
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("сообщение", "запомнили")
+        outState.putInt("bg_color", this.getBackgroundColor()) // Предполагается, что вы создадите метод для получения цвета
+    }
+
+
 }

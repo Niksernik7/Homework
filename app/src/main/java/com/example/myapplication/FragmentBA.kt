@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +26,7 @@ class FragmentBA : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("сообщение", "onCreateViewAA")
         return inflater.inflate(R.layout.fragment_ba, container, false)
     }
 
@@ -35,18 +37,12 @@ class FragmentBA : Fragment() {
         buttonSetColor.setOnClickListener {
             val randomColor = getRandomColor()
             Log.d("сообщение", "Устанавливаем цвет: $randomColor")
-            val bundle = Bundle()
             val resultBundle = Bundle().apply {
                 putInt("colorKey", randomColor) // Сохраняем цвет в бандл
             }
             parentFragmentManager.setFragmentResult("colorRequestKey", resultBundle) // Отправляем результат
-            // Замена FragmentBA на FragmentBB
-            val fragmentBB = FragmentBB.newInstance()
-            if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragmentBB, "FRAGMENT_BB")
-                    .addToBackStack(null) // добавляем в back stack, если нужно
-                    .commit()
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                (activity as? ActivityA)?.openOrReuseFragmentBB()
             }
         }
     }
@@ -63,10 +59,10 @@ class FragmentBA : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("сообщение", "ResueDestroyViewAA")
+        Log.d("сообщение", "DestroyViewAA")
     }
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("сообщение", "ResumeDestroyAA")
+        Log.d("сообщение", "DestroyAA")
     }
 }
